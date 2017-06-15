@@ -14,7 +14,7 @@ public class HangedModel {
 
 	
 	public HangedModel(String fileDictionary){
-		
+		//Diccionario
 		
 	}
 	
