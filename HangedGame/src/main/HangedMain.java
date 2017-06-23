@@ -28,13 +28,150 @@ package main;
 public class HangedMain {
 	
 	
+private static final int MAX_FAILS = 4;
+	
+	private static final int STATUS_INIT = 1;
+
+	
+	private static final int STATUS_EXIT = 2;
+	private static final int STATUS_GAME_OVER = 3;
+	private static final int STATUS_WINNER = 5;
+	private static final int STATUS_RESET = 6;
+
+	private static final int STATUS_PLAY = 0;
+
+	private static final int STATUS_LEVEL = 0;
+
 	/**
 	 * 
 	 * @param args
 	 */
 
-	public static void main(String[] args) {
+	public static void main(String[] args) {		
+		
+		int score=10;
+		int atteps=0;
+		
+		
+		HangedBoard board = new HangedBoard();
+		HangedModel dictionary = new HangedModel("dictionary.txt");
+		
+		String option="";
+		int command = STATUS_INIT;
+		
+		while(command!=STATUS_EXIT){
+			
+			if(command==STATUS_INIT){
+				UserInterface.showMenuInit(score);
+				option = UserInterface.scanMenuInicio();
+				if(option.equals(UserInterface.OPTION_SALIR)){
+					break; 
+				}else if(option.equals(UserInterface.OPTION_JUGAR)){
+					command = STATUS_PLAY; 
+				}else if(option.equals(UserInterface.OPTION_LEVEL)){
+					command = STATUS_LEVEL; 
+				}
+			}else if(command==STATUS_WINNER || command==STATUS_GAME_OVER){
+				UserInterface.showMenuAgain(true, board.getStreak()); 
+				option  = UserInterface.scannOpcionMenuBoad();
+				
+				if(option.equals(UserInterface.OPTION_SALIR)){
+					command=STATUS_INIT; 
+					continue;
+					
+				}else if(option.equals(UserInterface.OPTION_JUGAR)){
+					command = STATUS_PLAY;
+				}else if(option.equals(UserInterface.OPTION_LEVEL)){
+					command = STATUS_LEVEL; 
+				}
+			}
+			
+		
+			
+			if(command == STATUS_PLAY){
+				HangedModel.SecretWord secretWord = dictionary.getNextWord();
+				//board.reset();
+				int loop = loopGame(board, secretWord.word , secretWord.hint);
+				
+				if(loop == STATUS_EXIT){
+					command=STATUS_INIT; 
+				}else if(loop == STATUS_WINNER){
+					command=STATUS_WINNER; 
+				}else if(loop == STATUS_GAME_OVER){
+					command=STATUS_GAME_OVER;
+				}
+
+			}
+			
+			
+		}
 		
 	}
+	
+	
+	private static int loopGame(HangedBoard board, String word, String hint) { 
+		// TODO Auto-generated method stub
+		int attepts = 5; 
+		int status = 0;
+		String command="start"; 
+		boolean loop=true;
+		
+		board.startGame(word.toCharArray() ,attepts); 
+		
+		char[] pal = board.getWordPlayer(); 
+		
+		String wordPlayer = "";
+		for(int i=0; i<pal.length;i++){
+			wordPlayer += pal[i];
+		}
+		
+			
+		
+		
+		while(loop){ 
+			
+			UserInterface.showMenuBoard(wordPlayer, hint, attepts);
+			command = UserInterface.scannOpcionMenuBoad();
+		
+			if(command.equals("salir")){
+				status = STATUS_EXIT; 
+				break;
+			}
+			
+			
+			if(command.equals("reset")){
+				board.reset();
+				continue; 
+			}
+			
+			
+			int[] positions = board.addLetterToWordPlayer(command.charAt(0));
+			
+			if(positions.length==0){
+				board.addFail();
+				attepts = board.getCurrentfails();
+			}	
+			
+			
+			if(positions.length>0 && board.isWinner()){
+				board.addStreak(); 
+				status = STATUS_WINNER;  
+				break; 
+			}else if(positions.length>0 && board.isGameOver()){
+				board.reset();
+				status =  STATUS_GAME_OVER;
+				break; 
+			}else if(positions.length>0){
+				
+				continue; 
+			}
+			
+			
+		}
+		
+		return status; 
+	}	
+	
+	
 	
 }

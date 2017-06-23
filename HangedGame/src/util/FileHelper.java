@@ -62,6 +62,8 @@ public class FileHelper {
 
 	private static List<String> readSmallTextFile(String aFileName) throws IOException {
 	    Path path = Paths.get(aFileName);
+	    if(!Files.exists(path))
+	    	Files.createFile(path);
 	    return Files.readAllLines(path, ENCODING);
 	}
 		
