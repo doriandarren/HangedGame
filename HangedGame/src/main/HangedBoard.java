@@ -1,8 +1,11 @@
 package main;
 
+import java.io.File;
+
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 
 public class HangedBoard {
-
 	
 	/** Arreglo de caracteres que representa la palabra secreta */
 	private char wordSecret[]; 
@@ -20,10 +23,8 @@ public class HangedBoard {
 	
 		
 	public HangedBoard(){
-		//TODO complete definicion del contructor 
 		this.currentfails =0;
-		this.maxFails = 0;
-		
+		this.maxFails = 4;
 	}
 	
 	
@@ -33,15 +34,15 @@ public class HangedBoard {
 	 * @param maxFails numero maximo de fallos posibles 
 	 */
 	public void startGame(char[] secret, int maxFails){ 
-		this.maxFails = maxFails;	
+		//this.maxFails = 5;	
 		this.wordSecret = secret;
-		this.currentfails=0;
+		this.currentfails=maxFails;
 		this.wordPlayer = new char[wordSecret.length];
 		
 		/*for(char ch: wordPlayer)
 			ch='-';*/		
 		for(int i=0; i<wordPlayer.length;i++){
-			wordPlayer[i]='-';
+			wordPlayer[i]='_';
 		} 
 	}
 	
@@ -124,8 +125,7 @@ public class HangedBoard {
 			throw new RuntimeException("Error de programacion, wordPlayer ya contiene esta letra."
 					+ " Use el metodo hasLetterInWordPlayer() antes de invicar este metodo");
 		
-		if(!hasLetterInWordSecret(ch)){
-			currentfails++;
+		if(!hasLetterInWordSecret(ch)){		
 			return new int[0];
 		}
 		
@@ -183,5 +183,9 @@ public class HangedBoard {
 	public void addStreak() {
 		this.streak++;		
 	}
+
+	
+	
+	
 	
 }

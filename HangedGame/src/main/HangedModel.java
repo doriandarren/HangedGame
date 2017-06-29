@@ -80,7 +80,6 @@ public class HangedModel {
 		 */		
 		private SecretWord(String fileLineWord){
 			String[] value = fileLineWord.split(":");
-			//TODO validar length
 			this.word = value[0];
 			this.hint = value[1];
 		}
